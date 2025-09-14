@@ -1,15 +1,16 @@
 {
   "name": "sunwin-api-prime8",
   "version": "1.0.0",
-  "description": "API for Tai Xiu prediction based on historical data.",
+  "description": "API proxy for Tài Xỉu live results.",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "dev": "nodemon server.js"
   },
   "keywords": [
     "taixiu",
     "api",
-    "prediction",
+    "proxy",
     "node.js",
     "render"
   ],
@@ -17,7 +18,9 @@
   "license": "MIT",
   "dependencies": {
     "axios": "^1.7.2",
-    "express": "^4.19.2",
-    "node-cache": "^5.1.2"
+    "express": "^4.19.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0"
   }
 }
