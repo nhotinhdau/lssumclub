@@ -6,7 +6,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // API gốc
-const API_URL = "https://taixiu.gsum01.com/api/luckydice/GetSoiCau?";
+const API_URL = "http://taixiu.gsum01.com/api/luckydice/GetSoiCau??";
 
 let latestResult = null;
 
