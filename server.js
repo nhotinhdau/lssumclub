@@ -5,8 +5,8 @@ const axios = require('axios');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// API gốc
-const API_URL = "http://taixiu.gsum01.com/api/luckydice/GetSoiCau??";
+// API gốc (chỉ hỗ trợ HTTP, không dùng HTTPS)
+const API_URL = "http://taixiu.gsum01.com/api/luckydice/GetSoiCau";
 
 let latestResult = null;
 
@@ -22,11 +22,11 @@ async function fetchResult() {
 
         const json = response.data;
 
-        // Nếu API trả về 1 mảng => lấy phần tử đầu
+        // Nếu API trả về mảng -> lấy phần tử đầu
         const item = Array.isArray(json) ? json[0] : json;
 
         if (item && item.SessionId) {
-            const tong = (item.FirstDice + item.SecondDice + item.ThirdDice);
+            const tong = Number(item.FirstDice) + Number(item.SecondDice) + Number(item.ThirdDice);
             const ketQua = (tong >= 11) ? "Tài" : "Xỉu";
 
             latestResult = {
@@ -40,6 +40,8 @@ async function fetchResult() {
             };
 
             console.log("🎲 Phiên mới:", latestResult);
+        } else {
+            console.warn("⚠️ API trả dữ liệu không hợp lệ:", json);
         }
 
     } catch (err) {
@@ -61,9 +63,9 @@ app.get('/api/taixiu/ws', (req, res) => {
 
 // Default
 app.get('/', (req, res) => {
-    res.send('Proxy API Tài Xỉu. Gọi /api/taixiu/ws để lấy kết quả.');
+    res.send('🚀 Proxy API Tài Xỉu. Gọi /api/taixiu/ws để lấy kết quả.');
 });
 
 app.listen(PORT, () => {
-    console.log(`🚀 Server chạy cổng ${PORT}`);
+    console.log(`✅ Server chạy tại cổng ${PORT}`);
 });
