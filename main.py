@@ -14,11 +14,11 @@ logger = logging.getLogger(__name__)
 # ===== Config =====
 POLL_INTERVAL = 5
 RETRY_DELAY = 5
-API_URL = "https://taixiu1.gsum01.com/api/luckydice1/GetSoiCau"  # Thay bằng URL API thật
+API_URL = "https://taixiu1.gsum01.com/api/luckydice1/GetSoiCau"
 
 # ===== Biến lưu phiên mới nhất =====
 lock = threading.Lock()
-phien_moi_nhat = None  # Chỉ lưu 1 phiên duy nhất
+phien_moi_nhat = None
 
 ssl._create_default_https_context = ssl._create_unverified_context
 
@@ -33,7 +33,7 @@ def lay_du_lieu():
                 data = json.loads(resp.read().decode("utf-8"))
 
             if isinstance(data, list) and len(data) > 0:
-                game = data[0]  # chỉ lấy phiên mới nhất
+                game = data[0]
                 sid = game.get("SessionId")
                 if sid and sid != last_sid:
                     last_sid = sid
@@ -56,6 +56,8 @@ def lay_du_lieu():
 
 # ===== Flask API =====
 app = Flask(__name__)
+# Khởi chạy luồng để poll API ngay khi ứng dụng được Gunicorn nạp
+threading.Thread(target=lay_du_lieu, daemon=True).start()
 
 @app.route("/api/taixiu", methods=["GET"])
 def api_taixiu():
@@ -63,10 +65,3 @@ def api_taixiu():
         if phien_moi_nhat is None:
             return jsonify({"error": "Chưa có phiên mới"})
         return jsonify(phien_moi_nhat)
-
-# ===== Main =====
-if __name__ == "__main__":
-    threading.Thread(target=lay_du_lieu, daemon=True).start()
-    port = int(os.environ.get("PORT", 8000))  # Render cung cấp PORT
-    logger.info(f"Server đang chạy trên port {port}")
-    app.run(host="0.0.0.0", port=port)
